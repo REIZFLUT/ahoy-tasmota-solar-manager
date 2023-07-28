@@ -31,7 +31,8 @@ um den Manager verwenden zu können. Ausführliche Anleitungen findest du je auf
 - Den Worker-Service cron.php minütlich ausführen lassen
 - Den Worker-Service cron_horuly.php stündlich ausführen lassen
 
-Anweisungen für die Installation auf einer Synology NAS folgen.
+Anweisungen für die Installation auf einer Synology NAS findest du hier:
+https://github.com/REIZFLUT/ahoy-tasmota-solar-manager/wiki/Installation-auf-einer-Synology-NAS-DSM-7
 
 # Weitere Screens
 
