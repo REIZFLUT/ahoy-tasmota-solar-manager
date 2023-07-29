@@ -22,14 +22,19 @@ class SmartMeter extends Sensor
         
         if($result['info']['http_code'] == 200){
             $ra = json_decode($result['result'], true);
-            
+
+            $keys = array_keys($ra['StatusSNS']);
+            $key = $keys[1];
+
             $instance->datetime  = new DateTime($ra['StatusSNS']['Time'], $GLOBALS['CONFIG']['Timezone']);
-            $instance->total_in  = $ra['StatusSNS']['']['Total_in'];
-            $instance->total_out = $ra['StatusSNS']['']['Total_out'];
-            $instance->power     = $ra['StatusSNS']['']['Power_curr'];
+            $instance->total_in  = $ra['StatusSNS'][$key]['Total_in'];
+            $instance->total_out = $ra['StatusSNS'][$key]['Total_out'];
+            $instance->power     = $ra['StatusSNS'][$key]['Power_curr'];
             $instance->connected = true;
         }
         return $instance;
     }
+
+
 }
 
