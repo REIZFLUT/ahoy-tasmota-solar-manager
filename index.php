@@ -39,6 +39,7 @@ if (isset($_GET['date'])) {
     </div>
 
     <?php
+
     $mode = $_GET['mode'] ?? 'day';
     switch ($mode) {
         default:

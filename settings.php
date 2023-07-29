@@ -58,6 +58,11 @@ if(count($_POST) > 0){
         Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['energy_tariff'], 'energy_tariff']);
     }   
 
+    if(isset($_POST['use_virtual_feedback_counter'])){
+        Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['use_virtual_feedback_counter'], 'use_virtual_feedback_counter']);
+    }     
+
+    
 
     header('Location: settings.php');
 }
@@ -106,6 +111,15 @@ if(count($_POST) > 0){
                         <input type="url" name="smartmeter_url" value="<?= $GLOBALS['CONFIG']['SmartMeter']['Url']  ; ?>" class="form-control" required>
                         <small>Beispiel: http://mein-volkszaehler/cm?cmnd=status%208</small>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Smart-Meter ohne Einspeise-Zähler (Virtuellen Einspeise-Zähler verwenden)</label>
+                        <input type="number" name="use_virtual_feedback_counter" value="<?= $GLOBALS['CONFIG']['UseVirtualFeedbackCounter']  ; ?>" class="form-control" min="0" max="1" step="1" required>
+                        <small>Wenn dein Zähler keine Position für "Total_out" hat, kannst du den virtuellen Zähler verwenden. Er errechnet dann aus der durchschnittlichen Rückspeise-Leistung in Watt, deinen Verbrauch in kWh.
+                            Im Monitor wird in der Wertetabelle der Zählerwert nur stündlich aktualisiert. (1 = Virtueller Zähler an; 0 = Virtueller Zähler aus).<br>
+                            Aktueller Virtueller Einspeise-Zähler-Wert: <?= round($GLOBALS['CONFIG']['VirtualFeedbackCounter'] / 1000, 2); ?> kWh
+                        </small>
+                    </div>
+                                        
                     <hr>
                     <h4>Ahoy DTU</h4>               
                     <div class="mb-3">

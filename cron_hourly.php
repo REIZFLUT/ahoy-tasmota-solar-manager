@@ -101,6 +101,20 @@ foreach ($hs as $h_key => $h_val) {
     $prep = [$h_val['year'], $h_val['month'], $h_val['day'], $h_val['hour']];
     $existing = Sqlite::query('SELECT * FROM power_stat_hourly WHERE year = ? AND month = ? AND day = ? AND hour = ?', $prep);
     if(count($existing) == 0){
+
+        if($GLOBALS['CONFIG']['UseVirtualFeedbackCounter']){
+            
+            $virtual_grid_feedback_start = intval(Sqlite::selectById('system_config', 'virtual_feedback_counter', '*', 'k')['v']);
+            $virtual_grid_feedback_end   = $virtual_grid_feedback_start + intval($h_val['grid_pf_av']);
+            
+            $h_val['grid_f_start'] = $virtual_grid_feedback_start;
+            $h_val['grid_f_end']   = $virtual_grid_feedback_end;
+
+            Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$virtual_grid_feedback_end, 'virtual_feedback_counter']);
+        
+        }
+
+
         Sqlite::insert('power_stat_hourly', $h_val);
         Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [mktime($h_val['hour'], 59, 59, $h_val['month'], $h_val['day'], $h_val['year']), 'last_statistic_ts']);
     }

@@ -26,6 +26,12 @@ for ($i = 0; $i < 6; $i++) {
     // CHECK IF AVAILABLE
     if ($smartMeter->connected && $ahoyDTU->connected) {
 
+        if($GLOBALS['CONFIG']['UseVirtualFeedbackCounter']){
+            $grid_counter_out = intval($GLOBALS['CONFIG']['VirtualFeedbackCounter']);
+        } else {
+            $grid_counter_out = intval(round($smartMeter->total_out * 1000));
+        }
+
         // WRITE CONSUMTION AND PRODUCTION LOG
         $id = Sqlite::insert('power_log', [
             'measured_at' => time(),
@@ -35,7 +41,7 @@ for ($i = 0; $i < 6; $i++) {
             'inverter_power_limit_adjust' => intval(round($ahoyDTU->active_power_limit)),
             'inverter_power_limit_state' => 0,
             'grid_counter_in' => intval(round($smartMeter->total_in * 1000)),
-            'grid_counter_out' => intval(round($smartMeter->total_out * 1000)),
+            'grid_counter_out' => $grid_counter_out,
             'inverter_temp' => intval(round($ahoyDTU->temp * 100)),
             'inverter_total' => intval(round($ahoyDTU->total * 100))
         ]);
