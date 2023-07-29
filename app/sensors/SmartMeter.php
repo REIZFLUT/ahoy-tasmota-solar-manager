@@ -28,7 +28,7 @@ class SmartMeter extends Sensor
 
             $instance->datetime  = new DateTime($ra['StatusSNS']['Time'], $GLOBALS['CONFIG']['Timezone']);
             $instance->total_in  = $ra['StatusSNS'][$key]['Total_in'];
-            $instance->total_out = $ra['StatusSNS'][$key]['Total_out'];
+            $instance->total_out = isset($ra['StatusSNS'][$key]['Total_out']) ? $ra['StatusSNS'][$key]['Total_out']:0;
             $instance->power     = $ra['StatusSNS'][$key]['Power_curr'];
             $instance->connected = true;
         }
