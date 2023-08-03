@@ -214,9 +214,9 @@
                                 $energy_grid = $psh['grid_c_end'] - $psh['grid_c_start'];
                                 $energy_feedback = ($psh['grid_f_end'] - $psh['grid_f_start']);
                                 $energy_solar = (($psh['inv_total_end'] - $psh['inv_total_start']) * 10) - $energy_feedback;
-                                $energy_total = $energy_grid + $energy_solar - $energy_feedback;
-                                $energy_grid_perc = round($energy_grid / $energy_total * 100, 2);
-                                $energy_solar_perc = round(($energy_solar - $energy_feedback) / $energy_total * 100, 2);
+                                $energy_total = $energy_grid + $energy_solar;
+                                $energy_grid_perc = ($energy_total > 0) ? round($energy_grid / $energy_total * 100, 2):0;
+                                $energy_solar_perc = ($energy_total > 0) ? (round($energy_solar / $energy_total * 100, 2)):0;
 
 
                             ?>
