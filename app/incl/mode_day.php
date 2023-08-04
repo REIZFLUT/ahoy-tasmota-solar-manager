@@ -37,7 +37,7 @@
                 echo '[{v: [' . $ps['hour'] . ', 0, 0], f: "Gesamt: ' . $energy_total . ' Wh"}, ' . $energy_feedback . ', ' . $energy_solar + $energy_feedback . ", " . $energy_grid . "],\n";
             }
 
-            $energy_total_day = $energy_grid_day + $energy_solar_day;
+            $energy_total_day = $energy_grid_day + $energy_solar_day - $energy_feed_day;
 
             ?>
         ]);
