@@ -72,10 +72,33 @@ $showTable = $_GET['table'] ?? 0;
                         timespan_form.submit();
                     })
                 </script>
-
-
-
             </div>
+            <div class="ms-4">
+                <div class="btn-group" role="group">
+                    <span class="btn btn-dark">Anzeige</span>
+                    <a href="" class="btn btn-dark active viewBtn" data-column="1" data-color="darkblue" id="showGridBtn">N</a>
+                    <a href="" class="btn btn-dark active viewBtn" data-column="2" data-color="orange" id="showSolarBtn">S</a>
+                    <a href="" class="btn btn-dark active viewBtn" data-column="3" data-color="red" id="showConsBtn">V</a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            Ca. Verbrauch im Zeitfenster:
+            <?php
+            $data_n = count($data);
+            $data_l = ($data_n - 1 >= 0) ? $data_n - 1 : 0;
+            if ($data_n) {
+                $first_datapoint = $data[0];
+                $last_datapoint = $data[$data_l];
+                $moni_grid = ($last_datapoint['grid_counter_in']  - $first_datapoint['grid_counter_in']);
+                $moni_feed = ($last_datapoint['grid_counter_out'] - $first_datapoint['grid_counter_out']);
+                $moni_solar = (($last_datapoint['inverter_total']   - $first_datapoint['inverter_total']) * 10);
+
+                echo 'Netz: ' . $moni_grid . ' Wh; ';
+                echo 'Rück: ' . $moni_feed . 'Wh; ';
+                echo 'Erz.: ' . $moni_solar . ' Wh; ';
+                echo 'Verb.: ' . ($moni_grid + $moni_solar - $moni_feed) . ' Wh';
+            } ?>
         </div>
     </div>
 
@@ -84,7 +107,13 @@ $showTable = $_GET['table'] ?? 0;
         google.charts.load('current', {
             'packages': ['corechart']
         });
+
+
+
+
+        
         google.charts.setOnLoadCallback(drawChart);
+        
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
@@ -154,8 +183,57 @@ $showTable = $_GET['table'] ?? 0;
             };
 
             var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
             chart.draw(data, options);
+
+
+
+            document.querySelectorAll('.viewBtn').forEach((elm, i) => {                
+                elm.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    if(elm.classList.contains('active')){
+                        elm.classList.remove('active');
+                        updateChartView(data);   
+                    }
+                    else{
+                        elm.classList.add('active'); 
+                        updateChartView(data);  
+                    }                    
+
+
+                })
+            })
+
+            function updateChartView(data){
+
+                let hideCols = [];
+                let colColor = [];
+
+                document.querySelectorAll('.viewBtn').forEach((elm, i) => {
+                    if(elm.classList.contains('active')){
+                        colColor.push(elm.dataset.color);
+                    } else {
+                        hideCols.push(parseInt(elm.dataset.column));
+                    }
+                })
+
+                
+                if(colColor.length){
+                    let view = new google.visualization.DataView(data);
+                    view.hideColumns(hideCols);
+                    options.colors = colColor;
+                    chart.draw(view, options);
+                } else {
+                    chart.clearChart() ;
+                }
+                    
+
+            }
+
+            
+
+
+
         }
     </script>
 
