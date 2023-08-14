@@ -47,6 +47,11 @@ if(Sqlite::selectById('system_config', 'use_dtu', '*', 'k') == false){
     echo "Created use_dtu setting\n";
 }
 
+if(Sqlite::selectById('system_config', 'inverter_id', '*', 'k') == false){
+    Sqlite::insert('system_config', ['k' => 'inverter_id', 'v' => '0']);
+    echo "Created inverter_id\n";
+}
+
 if(Sqlite::selectById('system_config', 'smartmeter.url', '*', 'k') == false){
     Sqlite::insert('system_config', ['k' => 'smartmeter.url', 'v' => 'http://192.168.178.123/cm?cmnd=status%208']);
     echo "Created smartmeter.url setting\n";
@@ -75,6 +80,16 @@ if(Sqlite::selectById('system_config', 'ahoydtu.output_min', '*', 'k') == false)
 if(Sqlite::selectById('system_config', 'ahoydtu.reaction_factor', '*', 'k') == false){
     Sqlite::insert('system_config', ['k' => 'ahoydtu.reaction_factor', 'v' => '50']);
     echo "Created ahoydtu.reaction_factor setting\n";
+}
+
+if(Sqlite::selectById('system_config', 'opendtu.usr', '*', 'k') == false){
+    Sqlite::insert('system_config', ['k' => 'opendtu.usr', 'v' => '']);
+    echo "Created opendtu.user setting\n";
+}
+
+if(Sqlite::selectById('system_config', 'opendtu.pwd', '*', 'k') == false){
+    Sqlite::insert('system_config', ['k' => 'opendtu.pwd', 'v' => '']);
+    echo "Created opendtu.pwd setting\n";
 }
 
 echo '</pre>';

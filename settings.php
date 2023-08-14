@@ -61,7 +61,22 @@ if(count($_POST) > 0){
     if(isset($_POST['use_virtual_feedback_counter'])){
         Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['use_virtual_feedback_counter'], 'use_virtual_feedback_counter']);
     }     
+    if(isset($_POST['use_dtu'])){
+        Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['use_dtu'], 'use_dtu']);
+    }  
 
+    if(isset($_POST['inverter_id'])){
+        Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['inverter_id'], 'inverter_id']);
+    }     
+
+    if(isset($_POST['opendtu_user'])){
+        Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['opendtu_user'], 'opendtu.usr']);
+    }    
+
+    if(isset($_POST['opendtu_passwd'])){
+        Sqlite::query('UPDATE system_config SET v = ? WHERE k = ?', [$_POST['opendtu_passwd'], 'opendtu.pwd']);
+    }      
+    
     
 
     header('Location: settings.php');
@@ -113,20 +128,49 @@ if(count($_POST) > 0){
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Smart-Meter ohne Einspeise-Zähler (Virtuellen Einspeise-Zähler verwenden)</label>
-                        <input type="number" name="use_virtual_feedback_counter" value="<?= $GLOBALS['CONFIG']['UseVirtualFeedbackCounter']  ; ?>" class="form-control" min="0" max="1" step="1" required>
+                        <select name="use_virtual_feedback_counter" class="form-select" required>
+                            <option value="0" <?= $GLOBALS['CONFIG']['UseVirtualFeedbackCounter'] ? '':'selected';  ; ?>>Smart-Meter-Werte verwenden (Total_out)</option>
+                            <option value="1" <?= $GLOBALS['CONFIG']['UseVirtualFeedbackCounter'] ? 'selected':'';  ; ?>>Virtuellen Zähler verwden (Durchschnittswerte, ungenauer)</option>
+                        </select>
                         <small>Wenn dein Zähler keine Position für "Total_out" hat, kannst du den virtuellen Zähler verwenden. Er errechnet dann aus der durchschnittlichen Rückspeise-Leistung in Watt, deinen Verbrauch in kWh.
-                            Im Monitor wird in der Wertetabelle der Zählerwert nur stündlich aktualisiert. (1 = Virtueller Zähler an; 0 = Virtueller Zähler aus).<br>
+                            Im Monitor wird in der Wertetabelle der Zählerwert nur stündlich aktualisiert.<br>
                             Aktueller Virtueller Einspeise-Zähler-Wert: <?= round($GLOBALS['CONFIG']['VirtualFeedbackCounter'] / 1000, 2); ?> kWh
                         </small>
                     </div>
                                         
                     <hr>
-                    <h4>Ahoy DTU</h4>               
+                    <h4>DTU</h4>    
                     <div class="mb-3">
-                        <label class="form-label">Ahoy DTU Basis-Url</label>
+                        <label class="form-label">DTU Plattform</label>
+                        <select name="use_dtu" class="form-select" required>
+                            <option value="ahoy" <?= $GLOBALS['CONFIG']['UseDtu'] == 'ahoy' ? 'selected':'' ; ?>>Ahoy DTU</option>
+                            <option value="open" <?= $GLOBALS['CONFIG']['UseDtu'] == 'open' ? 'selected':'' ; ?>>Open DTU</option>
+                        </select>
+                        
+                        <small>OpenDTU BETA!!!</small>
+                    </div>                                
+                    <div class="mb-3">
+                        <label class="form-label">DTU Basis-Url</label>
                         <input type="url" name="ahoydtu_base_url" value="<?= $GLOBALS['CONFIG']['AhoyDTU']['BaseUrl']  ; ?>" class="form-control" required>
                         <small>Beispiel: http://ahoy-dtu</small>
-                    </div>   
+                    </div>  
+                    <div class="mb-3">
+                        <label class="form-label">Wechselrichter ID oder Seriennummer</label>
+                        <input type="text" name="inverter_id" value="<?= $GLOBALS['CONFIG']['InverterId']  ; ?>" class="form-control" required>
+                        <small>Derzeit ist nur ein Wechselrichter möglich. Bei Ahoy wird ab 0 gezählt (erster Wechselrichter = 0); Bei OpenDTU muss die Seriennummer eingegeben werden.</small>
+                    </div> 
+                    <div class="mb-3">
+                        <label class="form-label">OpenDTU User</label>
+                        <input type="text" name="opendtu_user" value="<?= $GLOBALS['CONFIG']['OpenDTU']['User']  ; ?>" class="form-control">
+                        <small>Optional für OpenDTU Benutzer</small>
+                    </div>                      
+                    <div class="mb-3">
+                        <label class="form-label">OpenDTU Passwort</label>
+                        <input type="text" name="opendtu_passwd" value="<?= $GLOBALS['CONFIG']['OpenDTU']['Password']  ; ?>" class="form-control">
+                        <small>Optional für OpenDTU Benutzer</small>
+                    </div>                        
+                    
+
                     <hr>
                     <h4>Dynamische Drosselung</h4>
                     <div class="alert alert-info">Durch die Einstellung einer dynamischen Drosselung, wird die Leistungsfähigkeit Ihrer Anlage auf die von Ihnen eingestellten Werte begrenzt. 

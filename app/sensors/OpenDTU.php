@@ -4,7 +4,7 @@ namespace App\Sensors;
 
 use App\Sensors\Sensor;
 
-class AhoyDTU extends Sensor
+class OpenDTU extends Sensor
 {
 
     public $active_power_limit;
@@ -17,40 +17,31 @@ class AhoyDTU extends Sensor
     public static function load($base_url)
     {
 
-        $instance = new AhoyDTU();
-        $connected_pl = false;
-        $connected_lv = false;
+        $instance = new OpenDTU();
+        $result = self::curl_get($base_url . '/api/livedata/status');
 
-        $result_pl = self::curl_get($base_url . '/api/record/config');
-        if ($result_pl['info']['http_code'] == 200) {
-            $ra = json_decode($result_pl['result'], true);
-            $inverter_id = intval($GLOBALS['CONFIG']['InverterId']);
-            $instance->active_power_limit = floatval($ra['inverter'][$inverter_id][0]['val']);
-            $connected_pl = true;
+
+        if ($result['info']['http_code'] == 200) {
+            $ra = json_decode($result['result'], true);
+            foreach($ra['inverters'] as $inverter){
+                if($inverter['serial'] == $GLOBALS['CONFIG']['InverterId']){
+                    $instance->active_power_limit = $inverter['limit_relative'];
+                    $instance->power_ac = $inverter['AC'][0]['Power']['v'];
+                    $instance->temp     = $inverter['INV'][0]['Temperature']['v'];
+                    $instance->total    = $inverter['AC'][0]['YieldTotal']['v'];
+                    $instance->connected = $inverter['reachable'];
+                }
+            }      
+        } else {
+            $instance->active_power_limit = 0;
+            $instance->power_ac = 0;
+            $instance->temp     = 0;
+            $instance->total    = 0;            
+            $instance->connected = false;
         }
-
-        $result_lv = self::curl_get($base_url . '/api/record/live');
-        $instance->total = 0;
-
-        if ($result_pl['info']['http_code'] == 200) {
-            $ra = json_decode($result_lv['result'], true);
-            foreach ($ra['inverter'][0] as $r) {
-                if ($r['fld'] == 'P_AC') {
-                    $instance->power_ac = floatval($r['val']);
-                }
-                if ($r['fld'] == 'Temp') {
-                    $instance->temp = floatval($r['val']);
-                }
-                if ($r['fld'] == 'YieldTotal') {
-                    $instance->total = ($instance->total < floatval($r['val'])) ? floatval($r['val']) : $instance->total;
-                }
-            }
-            $connected_lv = true;
-        }
-
-        $instance->connected = ($connected_pl && $connected_lv);
 
         return $instance;
+
     }
 
     public function limitPower($demand, $base_url)
@@ -105,18 +96,20 @@ class AhoyDTU extends Sensor
         $inverter_id = intval($GLOBALS['CONFIG']['InverterId']);
 
         curl_setopt_array($curl, [
-            CURLOPT_URL => $base_url . '/api/ctrl',
+            CURLOPT_URL => $base_url . '/api/limit/config',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 0,
             CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTPAUTH => CURLAUTH_ANY,
+            CURLOPT_USERPWD => trim($GLOBALS['CONFIG']['OpenDTU']['User']).':'.trim($GLOBALS['CONFIG']['OpenDTU']['Password']),
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => '{
-            "id":"'.$inverter_id.'",
-            "cmd": "limit_nonpersistent_relative",
-            "val": "' . $power_limit_perc . '"
+            "serial":"'.$inverter_id.'",
+            "limit_type": 1,
+            "limit_value": "' . $power_limit_perc . '"
         }',
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json'
@@ -129,7 +122,7 @@ class AhoyDTU extends Sensor
 
         if ($info['http_code'] == 200) {
             $result = json_decode($response, true);
-            if ($result['success']) {
+            if ($result['type'] == 'success') {
                 return [
                     'active_power_limit_perc' => $power_limit_perc,
                     'success' => true,
