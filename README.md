@@ -16,7 +16,7 @@ Derzeit nur auf deutsch verfügbar.
 # Voraussetzungen
 Die Software wurde speziell für die Zusammenarbeit zwischen einem "Volkszähler"
 (Tasmota Smart Meter, https://tasmota.github.io/docs/Smart-Meter-Interface/) und 
-einer AhoyDTU (https://ahoydtu.de/) entwickelt.
+einer AhoyDTU (https://ahoydtu.de/) entwickelt. Derzeit wird aber auch an einer Lösung für OpenDTU gearbeitet.
 
 Die Software wurd absichtlich ohne PHP-Framework und Paketabhängigkeiten geschrieben, 
 um sie schnell und einfach auf einer NAS oder einem Raspberry PI installieren zu können.
