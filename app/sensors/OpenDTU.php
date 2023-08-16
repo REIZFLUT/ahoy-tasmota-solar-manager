@@ -19,7 +19,7 @@ class OpenDTU extends Sensor
 
         $instance = new OpenDTU();
         $result = self::curl_get($base_url . '/api/livedata/status');
-
+        
 
         if ($result['info']['http_code'] == 200) {
             $ra = json_decode($result['result'], true);
@@ -29,7 +29,7 @@ class OpenDTU extends Sensor
                     $instance->power_ac = $inverter['AC'][0]['Power']['v'];
                     $instance->temp     = $inverter['INV'][0]['Temperature']['v'];
                     $instance->total    = $inverter['AC'][0]['YieldTotal']['v'];
-                    $instance->connected = $inverter['reachable'];
+                    $instance->connected = true;
                 }
             }      
         } else {
