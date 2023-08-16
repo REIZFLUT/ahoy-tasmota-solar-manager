@@ -26,8 +26,8 @@ class OpenDTU extends Sensor
             foreach($ra['inverters'] as $inverter){
                 if($inverter['serial'] == $GLOBALS['CONFIG']['InverterId']){
                     $instance->active_power_limit = $inverter['limit_relative'];
-                    $instance->power_ac = $inverter['AC'][0]['Power']['v'];
-                    $instance->temp     = $inverter['INV'][0]['Temperature']['v'];
+                    $instance->power_ac = $inverter['reachable'] ? $inverter['AC'][0]['Power']['v']:0;
+                    $instance->temp     = $inverter['reachable'] ? $inverter['INV'][0]['Temperature']['v']:0;
                     $instance->total    = $inverter['AC'][0]['YieldTotal']['v'];
                     $instance->connected = true;
                 }
