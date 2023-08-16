@@ -24,6 +24,12 @@ $GLOBALS['CONFIG']['MaxGridFeedback']           = intval(Sqlite::selectById('sys
 
 
 $GLOBALS['CONFIG']['SmartMeter']['Url']         = Sqlite::selectById('system_config', 'smartmeter.url', '*', 'k')['v'];
+$GLOBALS['CONFIG']['SmartMeter']['TotalInKey']  = 'Total_in';
+$GLOBALS['CONFIG']['SmartMeter']['TotalOutKey'] = 'Total_out';
+$GLOBALS['CONFIG']['SmartMeter']['TimeKey']     = 'Time';
+$GLOBALS['CONFIG']['SmartMeter']['PowerKey']    = 'Power_curr';
+
+
 $GLOBALS['CONFIG']['AhoyDTU']['BaseUrl']        = Sqlite::selectById('system_config', 'ahoydtu.base_url', '*', 'k')['v']; 
 
 
