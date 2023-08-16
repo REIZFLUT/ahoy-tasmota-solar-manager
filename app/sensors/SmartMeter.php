@@ -26,10 +26,15 @@ class SmartMeter extends Sensor
             $keys = array_keys($ra['StatusSNS']);
             $key = $keys[1];
 
-            $instance->datetime  = new DateTime($ra['StatusSNS']['Time'], $GLOBALS['CONFIG']['Timezone']);
-            $instance->total_in  = $ra['StatusSNS'][$key]['Total_in'];
-            $instance->total_out = isset($ra['StatusSNS'][$key]['Total_out']) ? $ra['StatusSNS'][$key]['Total_out']:0;
-            $instance->power     = $ra['StatusSNS'][$key]['Power_curr'];
+            $tin_key   = $GLOBALS['CONFIG']['SmartMeter']['TotalInKey'];
+            $tout_key  = $GLOBALS['CONFIG']['SmartMeter']['TotalOutKey'];
+            $time_key  = $GLOBALS['CONFIG']['SmartMeter']['TimeKey'];
+            $power_key = $GLOBALS['CONFIG']['SmartMeter']['PowerCurr'];
+
+            $instance->datetime  = new DateTime($ra['StatusSNS'][$time_key], $GLOBALS['CONFIG']['Timezone']);
+            $instance->total_in  = $ra['StatusSNS'][$key][$tin_key];
+            $instance->total_out = isset($ra['StatusSNS'][$key][$tout_key]) ? $ra['StatusSNS'][$key][$tout_key]:0;
+            $instance->power     = $ra['StatusSNS'][$key][$power_key];
             $instance->connected = true;
         }
         return $instance;
