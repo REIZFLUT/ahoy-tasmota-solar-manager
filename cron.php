@@ -6,6 +6,7 @@ ini_set('max_execution_time', 58);
 require __DIR__ . '/app/config.php';
 require __DIR__ . '/app/sensors/Sensor.php';
 require __DIR__ . '/app/sensors/SmartMeter.php';
+require __DIR__ . '/app/sensors/OpenDTU.php';
 require __DIR__ . '/app/sensors/AhoyDTU.php';
 
 use App\Database\Sqlite;
