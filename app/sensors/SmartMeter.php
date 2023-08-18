@@ -29,7 +29,7 @@ class SmartMeter extends Sensor
             $tin_key   = $GLOBALS['CONFIG']['SmartMeter']['TotalInKey'];
             $tout_key  = $GLOBALS['CONFIG']['SmartMeter']['TotalOutKey'];
             $time_key  = $GLOBALS['CONFIG']['SmartMeter']['TimeKey'];
-            $power_key = $GLOBALS['CONFIG']['SmartMeter']['PowerCurr'];
+            $power_key = $GLOBALS['CONFIG']['SmartMeter']['PowerKey'];
 
             $instance->datetime  = new DateTime($ra['StatusSNS'][$time_key], $GLOBALS['CONFIG']['Timezone']);
             $instance->total_in  = $ra['StatusSNS'][$key][$tin_key];
